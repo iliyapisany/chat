@@ -1,0 +1,36 @@
+version: '3.3'
+services:
+  nginx:
+    image: nginx:latest
+    container_name: chat.loc_nginx
+    ports:
+    - "80:80"
+    - "443:443"
+    volumes:
+    - ./docker/Nginx/core:/etc/nginx/conf.d
+    - ./Project:/var/www/
+    - ./docker/Nginx/logs:/var/log/nginx/
+    - ./docker/Nginx/html:/usr/share/nginx/html/
+    links:
+    - php
+
+  mysql:
+    image: mysql:latest
+    ports:
+    - "3306:3306"
+    container_name: chat.loc_mysql
+    environment:
+    - MYSQL_ROOT_PASSWORD=1234567890
+    - MYSQL_DATABASE=chat_loc
+    - MYSQL_USER=test
+    - MYSQL_PASSWORD=test
+    volumes:
+    - ./docker/MySQL:/var/lib/mysql
+
+  php:
+    build: ./docker/PHP
+    container_name: chat.loc_php
+    volumes:
+    - ./Project:/app
+    links:
+    - mysql
